@@ -7,8 +7,9 @@ import Ratelimiter from '../middilware/RateLimiter.js';
 import cors from 'cors';
 import path from 'path';
 dotenv.config();
-app.use(express.json());
-app.use(Ratelimiter);
+const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
+
 if (process.env.NODE_ENV !== 'production') {
   app.use(
     cors({
@@ -16,15 +17,17 @@ if (process.env.NODE_ENV !== 'production') {
     })
   );
 }
+app.use(express.json());
+app.use(Ratelimiter);
+app.use('/api/notes', noteRoutes);
 
 // app.use((req, res, next)=>{
 //   console.log(`req method is: ${req.method} req URL is: ${req.url}`)
 //   next()
 // })
 
-const PORT = process.env.PORT || 5000;
-const __dirname = path.resolve();
-app.use('/api/notes', noteRoutes);
+
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/dist')));
   app.get('*', (req, res) => {
